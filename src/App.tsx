@@ -16,11 +16,11 @@ import "@mantine/dates/styles.css";
 type Metrics = Record<string, number>;
 
 export default function App() {
-  const [start, setStart] = useState<Date | null>(new Date("2025-03-01"));
-  const [end,   setEnd]   = useState<Date | null>(new Date("2025-04-20"));
+  const [start, setStart] = useState<string | null>("2025-03-01");
+  const [end,   setEnd]   = useState<string | null>("2025-04-20");
   const [loading, setLoading] = useState(false);
   const [metrics, setMetrics] = useState<Metrics | null>(null);
-  const API = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
+  const API = import.meta.env.VITE_API_URL;
 
   async function run() {
     setLoading(true);
@@ -30,8 +30,8 @@ export default function App() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          start: start?.toISOString().slice(0, 10),
-          end: end?.toISOString().slice(0, 10),
+          start,
+          end,
           fetch: true,
         }),
       });
@@ -55,12 +55,14 @@ export default function App() {
             label="Start"
             value={start}
             onChange={setStart}
+            valueFormat="YYYY-MM-DD"
             clearable
           />
           <DateInput
             label="End"
             value={end}
             onChange={setEnd}
+            valueFormat="YYYY-MM-DD"
             clearable
           />
           <Button onClick={run} loading={loading} disabled={!start || !end}>
@@ -76,7 +78,7 @@ export default function App() {
         )}
 
         {metrics && (
-          <Table striped highlightOnHover withBorder>
+          <Table striped highlightOnHover>
             <thead>
               <tr>
                 <th>Metric</th>
