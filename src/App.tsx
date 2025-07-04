@@ -15,28 +15,28 @@ import "@mantine/dates/styles.css";
 
 type Metrics = Record<string, number>;
 
-const fakeTable = [
-  {
-    metric: "Metric 1",
-    value: 1.234,
-  },
-  {
-    metric: "Metric 2",
-    value: 2.345,
-  },
-  {
-    metric: "Metric 3",
-    value: 3.456,
-  },
-  {
-    metric: "Metric 4",
-    value: 4.567,
-  },
-  {
-    metric: "Metric 5",
-    value: 5.678,
-  },
-];
+// const fakeTable = [
+//   {
+//     metric: "Metric 1",
+//     value: 1.234,
+//   },
+//   {
+//     metric: "Metric 2",
+//     value: 2.345,
+//   },
+//   {
+//     metric: "Metric 3",
+//     value: 3.456,
+//   },
+//   {
+//     metric: "Metric 4",
+//     value: 4.567,
+//   },
+//   {
+//     metric: "Metric 5",
+//     value: 5.678,
+//   },
+// ];
 
 export default function App() {
   const [start, setStart] = useState<string | null>("2025-03-01");
