@@ -1,11 +1,23 @@
 import { useState } from "react";
-import "./index.css";
+import {
+  Container,
+  Stack,
+  Group,
+  Title,
+  Button,
+  Table,
+  Loader,
+  Text,
+} from "@mantine/core";
+import { DateInput } from "@mantine/dates";
+import "@mantine/core/styles.css";
+import "@mantine/dates/styles.css";
 
 type Metrics = Record<string, number>;
 
 export default function App() {
-  const [start, setStart]     = useState("2025-03-01");
-  const [end, setEnd]         = useState("2025-04-20");
+  const [start, setStart] = useState<Date | null>(new Date("2025-03-01"));
+  const [end,   setEnd]   = useState<Date | null>(new Date("2025-04-20"));
   const [loading, setLoading] = useState(false);
   const [metrics, setMetrics] = useState<Metrics | null>(null);
   const API = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
@@ -17,52 +29,71 @@ export default function App() {
       const res = await fetch(`${API}/metrics`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ start, end, fetch: true }),
+        body: JSON.stringify({
+          start: start?.toISOString().slice(0, 10),
+          end: end?.toISOString().slice(0, 10),
+          fetch: true,
+        }),
       });
       if (!res.ok) throw new Error(await res.text());
       setMetrics(await res.json());
-    } catch (err: any) {
-      alert(err.message || err);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      alert(message);
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="min-h-screen p-8 space-y-8">
-      <h1 className="text-3xl font-bold">Growth-Model Dashboard</h1>
+    <Container size="md" py="xl">
+      <Stack gap="xl">
+        <Title order={1}>Growth-Model Dashboard</Title>
 
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div>
-          <label>Start&nbsp;</label>
-          <input type="date" value={start} onChange={e => setStart(e.target.value)} />
-        </div>
-        <div>
-          <label>End&nbsp;</label>
-          <input type="date" value={end} onChange={e => setEnd(e.target.value)} />
-        </div>
-        <button onClick={run} disabled={loading} className="btn">
-          {loading ? "Computing…" : "Run"}
-        </button>
-      </div>
+        <Group wrap="wrap">
+          <DateInput
+            label="Start"
+            value={start}
+            onChange={setStart}
+            clearable
+          />
+          <DateInput
+            label="End"
+            value={end}
+            onChange={setEnd}
+            clearable
+          />
+          <Button onClick={run} loading={loading} disabled={!start || !end}>
+            Run
+          </Button>
+        </Group>
 
-      {loading && <div>Loading…</div>}
+        {loading && (
+          <Group justify="center">
+            <Loader />
+            <Text>Computing... Might take about a minute</Text>
+          </Group>
+        )}
 
-      {metrics && (
-        <table className="table-auto border-collapse">
-          <thead>
-            <tr><th>Metric</th><th>Value</th></tr>
-          </thead>
-          <tbody>
-            {Object.entries(metrics).map(([k, v]) => (
-              <tr key={k}>
-                <td className="border px-2 py-1">{k}</td>
-                <td className="border px-2 py-1">{v.toFixed(3)}</td>
+        {metrics && (
+          <Table striped highlightOnHover withBorder>
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>Value</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-    </div>
+            </thead>
+            <tbody>
+              {Object.entries(metrics).map(([k, v]) => (
+                <tr key={k}>
+                  <td>{k}</td>
+                  <td>{v.toFixed(3)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        )}
+      </Stack>
+    </Container>
   );
 }
