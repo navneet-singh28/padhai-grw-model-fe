@@ -15,6 +15,29 @@ import "@mantine/dates/styles.css";
 
 type Metrics = Record<string, number>;
 
+const fakeTable = [
+  {
+    metric: "Metric 1",
+    value: 1.234,
+  },
+  {
+    metric: "Metric 2",
+    value: 2.345,
+  },
+  {
+    metric: "Metric 3",
+    value: 3.456,
+  },
+  {
+    metric: "Metric 4",
+    value: 4.567,
+  },
+  {
+    metric: "Metric 5",
+    value: 5.678,
+  },
+];
+
 export default function App() {
   const [start, setStart] = useState<string | null>("2025-03-01");
   const [end,   setEnd]   = useState<string | null>("2025-04-20");
@@ -79,20 +102,20 @@ export default function App() {
 
         {metrics && (
           <Table striped highlightOnHover>
-            <thead>
-              <tr>
-                <th>Metric</th>
-                <th>Value</th>
-              </tr>
-            </thead>
-            <tbody>
+            <Table.Thead>
+              <Table.Tr>
+                <Table.Th>Metric</Table.Th>
+                <Table.Th>Value</Table.Th>
+              </Table.Tr>
+            </Table.Thead>
+            <Table.Tbody>
               {Object.entries(metrics).map(([k, v]) => (
-                <tr key={k}>
-                  <td>{k}</td>
-                  <td>{v.toFixed(3)}</td>
-                </tr>
+                <Table.Tr key={k}>
+                  <Table.Td>{k}</Table.Td>
+                  <Table.Td>{v.toFixed(3)}</Table.Td>
+                </Table.Tr>
               ))}
-            </tbody>
+            </Table.Tbody>
           </Table>
         )}
       </Stack>
